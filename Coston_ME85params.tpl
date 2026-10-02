@@ -755,7 +755,7 @@ FUNCTION mcmcoutput
     {
       for(z=1;z<=numzone;z++)
       {
-        mcmcout<<migmat(i,z);
+        mcmcout<<migmat(i,z)<<" ";
       }
     }
 
@@ -763,7 +763,7 @@ FUNCTION mcmcoutput
  // only output the non zero log_mageffv
      for (i=1;i<=nummageff;i++)
      {
-     mcmcout<<log_mageffv(i);
+     mcmcout<<log_mageffv(i)<<" ";
      }
   
     mcmcout<<endl;    

@@ -1,0 +1,132 @@
+#if !defined(_COSTON_ME85PARAMS_)
+#  define _COSTON_ME85PARAMS_
+
+class model_data : public ad_comm{
+  data_int numsts;
+  data_int numsea;
+  data_int numzone;
+  data_matrix releases;
+  data_ivector release_sea;
+  data_ivector release_yr;
+  data_vector tagsurv;
+  data_matrix effort;
+  data_matrix mageff;
+  data_4array recapture;
+  data_int effsamplesize;
+  data_3array migrationprior;
+  data_int numtheta;
+  data_int nummageff;
+  data_vector mageff_bound;
+  data_int testnum;
+  int z;
+  int s;
+  int s2;
+  int z2;
+  int i;
+  ~model_data();
+  model_data(int argc,char * argv[]);
+  friend class model_parameters;
+};
+
+class model_parameters : public model_data ,
+  public function_minimizer
+{
+public:
+  ~model_parameters();
+  void preliminary_calculations(void);
+  void set_runtime(void);
+  virtual void * mycast(void) {return (void*)this;}
+  static int mc_phase(void)
+  {
+    return initial_params::mc_phase;
+  }
+  static int mceval_phase(void)
+  {
+    return initial_params::mceval_phase;
+  }
+  static int sd_phase(void)
+  {
+    return initial_params::sd_phase;
+  }
+  static int current_phase(void)
+  {
+    return initial_params::current_phase;
+  }
+  static int last_phase(void)
+  {
+    return (initial_params::current_phase
+      >=initial_params::max_number_phases);
+  }
+  static prevariable current_feval(void)
+  {
+    return *objective_function_value::pobjfun;
+  }
+private:
+  ivector integer_control_flags;
+  dvector double_control_flags;
+  param_init_bounded_number log_M;
+  param_init_bounded_vector log_q;
+  param_init_vector theta;
+  param_init_bounded_number log_k;
+  param_init_d3array logmigparam;
+  param_init_bounded_vector log_mageffv;
+  param_number M;
+  param_number Myr;
+  param_vector q;
+  param_vector mageffv;
+  param_number k;
+  param_matrix p;
+  param_matrix qtot;
+  param_matrix F;
+  param_matrix Z;
+  param_matrix pobs;
+  param_matrix releases_tm;
+  param_matrix catches;
+  param_matrix orecapture;
+  param_matrix N_pop;
+  param_matrix est_mageff;
+  param_3array migmat;
+  param_4array Ntagmat;
+  param_number summ;
+  param_number summ0;
+  param_number count;
+  param_4array expected;
+  param_4array likeli;
+  param_number sum_qtot;
+  param_number count_qtot;
+  param_number mean_qtot;
+  param_number count_sdrepq;
+  param_stddev_matrix migmatsolutions1;
+  param_stddev_matrix migmatsolutions2;
+  param_stddev_matrix migmatsolutions3;
+  param_stddev_matrix migmatsolutions4;
+  param_stddev_matrix migmatsolutions5;
+  param_stddev_matrix migmatsolutions6;
+  param_stddev_vector qtotsolutions;
+  param_number negLLrecapture;
+  param_number negLLmig;
+  param_number negLLq;
+  param_number prior_function_value;
+  param_number likelihood_function_value;
+  objective_function_value negLL;
+public:
+  virtual void userfunction(void);
+  virtual void report(const dvector& gradients);
+  virtual void final_calcs(void);
+  model_parameters(int sz,int argc, char * argv[]);
+  virtual void initializationfunction(void){}
+  void exp_param(void);
+  void app_tagsurv(void);
+  void calc_qtot(void);
+  void calc_mort(void);
+  void calc_pobs(void);
+  void calc_migmat(void);
+  void calc_ntagmat(void);
+  void calc_negLL(void);
+  void calc_mageff(void);
+  void set_solutions(void);
+  void mcmcoutput(void);
+  void write_waic_row(void);
+
+};
+#endif
